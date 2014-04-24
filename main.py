@@ -19,6 +19,7 @@ import datetime
 import webapp2
 
 import time
+from hashlib import sha256
 
 
 from google.appengine.ext import db
@@ -177,13 +178,19 @@ class MainHandler(Handler):
         	formatting_table['rows'] = '\n'.join([get_row(greyVid, "C.G.P. Grey")] + [get_row(vid, "Brady Haran") for vid in bradyVids[::-1]])
         	
         	self.write(page_template%formatting_table)
-        except IndexError:
+        except:
         	self.error(500)
-        	self.write("I'm currently updating to add view counters.  Back in a bit :)<br><br>-Nicholas")
+        	self.write("I'm currently updating to add view averages/totals.  Back in a bit :)<br><br>-Nicholas")
         
 
 class UpdateHandler(Handler):
 	def get(self):
+		secret = self.request.get('secret')
+		if sha256(secret).hexdigest() != '30f46c9349a149146110dd3e7d8dd7c7c3a585e737eab598cf2bfb38d774eba5':
+			self.error(400)
+			return
+		
+		
 		all_grey_vids = [ ]
 		for channel in GREY_CHANNELS:
 			all_grey_vids += youtube_integration.get_vids(channel,'GreyVideo')
@@ -224,10 +231,16 @@ class UpdateHandler(Handler):
 			brady_vid.viewcount = youtube_integration.get_view_count(brady_vid.yt_id)
 			brady_vid.put()
 		
-		self.write('Database updated! <a href="/update_push">Push this update.</a>')
+		self.write('Database updated! <a href="/update_push?secret=%s">Push this update.</a>' % secret)
 
 class UpdatePushHandler(Handler):
 	def get(self):
+		secret = self.request.get('secret')
+		if sha256(secret).hexdigest() != '30f46c9349a149146110dd3e7d8dd7c7c3a585e737eab598cf2bfb38d774eba5':
+			self.error(400)
+			return
+			
+			
 		memcache.flush_all()
 		load_front_data()
 		
