@@ -41,7 +41,11 @@ def load_front_data():
 	greyVid = memcache.get('greyVid')
 	lastUpdate = memcache.get('lastUpdate')
 	
-	if not (bradyVids and greyVid and lastUpdate):
+	greyViews = memcache.get('greyViews')
+	bradyTotal = memcache.get('bradyTotal')
+	bradyAverage = memcache.get('bradyAverage')
+	
+	if not (bradyVids and greyVid and lastUpdate and greyViews and bradyTotal and bradyAverage):
 		bradyVids = db.GqlQuery("SELECT * FROM BradyVideo ORDER BY published DESC")
 		bradyVids = list(bradyVids)
 		memcache.set('bradyVids', bradyVids)
@@ -51,8 +55,19 @@ def load_front_data():
 		
 		lastUpdate = list(db.GqlQuery("SELECT * FROM UpdateLog ORDER BY update_time DESC LIMIT 1"))[0].update_time
 		memcache.set('lastUpdate', lastUpdate)
+		
+		greyViews = greyVid.viewcount
+		memcache.set('greyViews', greyViews)
+		
+		countable_brady_counts = [vid.viewcount for vid in bradyVids if vid.viewcount>=0]
+		
+		bradyTotal = sum(countable_brady_counts)
+		memcache.set('bradyTotal', bradyTotal)
+		
+		bradyAvg = bradyTotal/len(countable_brady_counts)
+		memcache.set('bradyAvg', bradyAvg)
 	
-	return (bradyVids, greyVid, lastUpdate)
+	return (bradyVids, greyVid, lastUpdate, greyViews, bradyTotal, bradyAvg)
 
 def esc(s):
 	return cgi.escape(s,quote=True)
@@ -91,13 +106,24 @@ page_template = """
 <html>
 <head>
 	<title>Brady vs. Grey</title>
+	<script>
+		function writeThings ()
+		{
+			for (var i in document.getElementsByClassName('hidden-to-grey'))
+			{
+				document.getElementsByClassName('hidden-to-grey')[i].hidden = false;
+			}
+			var button = document.getElementById('hidden-stuff-toggle');
+			button.parentNode.removeChild(button);	
+		}
+	</script>
 </head>
 <body>
 <font size="5">Q: How many videos has Brady Haran released since C.G.P. Grey last released a video?<br />
 A:
 </font>
 <span style="font-size: 100px;">%(number)s</span>
-<br><br>
+<br /><hr /><br />
 <table cellpadding="5" cellspacing="5">
 	<tr>
 		<td><strong>
@@ -118,13 +144,37 @@ A:
 	</tr>
 	%(rows)s
 </table>
-<br>
-Coming soon: view totals/averages.
-<br><br>
-Last updated: %(refresh_date)s
-<br>
-Powered by YouTube Data API (v3)
+<hr>
+<font size="5">Q: How do their view counts compare?<br />A:</font>
 
+<table cellpadding="3" cellspacing="3">
+	<tr>
+		<td>Average Grey views</td>
+		<td>%(grey_views)s</td>
+	</tr>
+	<tr>
+		<td>Average Brady views</td>
+		<td>%(brady_avg)s</td>
+	</tr>
+	<tr id="hidden-stuff-toggle">
+		<td>
+			<button onclick="writeThings();">Grey, don't click here!</button>
+		</td>
+	</tr>
+	
+	<tr class="hidden-to-grey" hidden>
+		<td>Total Grey views</td>
+		<td>%(grey_views)s</td>
+	</tr>
+	<tr class="hidden-to-grey" hidden>
+		<td>Total Brady views</td>
+		<td>%(brady_total)s</td>
+	</tr>
+</table>
+
+<hr />
+Last updated: %(refresh_date)s.
+Powered by YouTube Data API (v3).
 <!--
 FYI:
 Grey's channels: CGPGrey, CGPGrey2, and greysfavs
@@ -171,11 +221,14 @@ def get_row(vid, creator):
 class MainHandler(Handler):
     def get(self):
         try:
-        	bradyVids, greyVid, lastUpdate = load_front_data()
+        	bradyVids, greyVid, lastUpdate, greyViews, bradyTotal, bradyAvg = load_front_data()
         	formatting_table = { }
         	formatting_table['number'] = len(bradyVids)
         	formatting_table['refresh_date'] = lastUpdate.strftime('%Y-%m-%d, %H:%M:%S UTC')
         	formatting_table['rows'] = '\n'.join([get_row(greyVid, "C.G.P. Grey")] + [get_row(vid, "Brady Haran") for vid in bradyVids[::-1]])
+        	formatting_table['grey_views'] = greyViews
+        	formatting_table['brady_total'] = bradyTotal
+        	formatting_table['brady_avg'] = bradyAvg
         	
         	self.write(page_template%formatting_table)
         except:
