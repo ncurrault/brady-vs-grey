@@ -117,6 +117,8 @@ A:
 	</tr>
 	%(rows)s
 </table>
+<br>
+Coming soon: view totals/averages.
 <br><br>
 Last updated: %(refresh_date)s
 <br>
@@ -177,7 +179,7 @@ class MainHandler(Handler):
         	self.write(page_template%formatting_table)
         except IndexError:
         	self.error(500)
-        	self.write('AN ERROR OCCURRED.')
+        	self.write("I'm currently updating to add view counters.  Back in a bit :)<br><br>-Nicholas")
         
 
 class UpdateHandler(Handler):
