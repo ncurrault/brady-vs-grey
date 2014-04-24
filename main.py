@@ -233,7 +233,7 @@ class MainHandler(Handler):
         	self.write(page_template%formatting_table)
         except:
         	self.error(500)
-        	self.write("I'm currently updating to add view averages/totals.  Back in a bit :)<br><br>-Nicholas")
+        	self.write("There was an error! Please tell me how you got here at nicholas.curr+dev@gmail.com<br><br>Thanks,<br>Nicholas")
         
 
 class UpdateHandler(Handler):
