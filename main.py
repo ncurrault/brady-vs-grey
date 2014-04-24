@@ -18,6 +18,9 @@ import cgi
 import datetime
 import webapp2
 
+import time
+
+
 from google.appengine.ext import db
 from google.appengine.api import memcache
 
@@ -106,6 +109,9 @@ A:
 			Uploaded
 		</strong></td>
 		<td><strong>
+			View Count
+		</strong></td>
+		<td><strong>
 			Title/Link
 		</strong></td>
 	</tr>
@@ -138,6 +144,9 @@ def get_row(vid, creator):
 			%(published)s
 		</td>
 		<td>
+			%(views)s
+		</td>
+		<td>
 			<a href="%(url)s">
 				%(title)s
 			</a>
@@ -147,8 +156,13 @@ def get_row(vid, creator):
 	'title': vid.title,
 	'channel': vid.channel,
 	'published': vid.published.strftime('%B %d, %Y, %I:%M %p'),
-	'url': vid.url,
-	'creator': creator
+	'url': 'http://youtu.be/' + vid.yt_id,
+	'creator': creator,
+	'views': ( \
+	vid.viewcount if vid.viewcount >= 0 \
+	else ("&lt;live video&gt;" if vid.viewcount==-1 \
+	else ("&lt;not yet calculated&gt;" if vid.viewcount==-2 \
+	else "&lt;error&gt;")))
 	}
 
 class MainHandler(Handler):
@@ -188,18 +202,25 @@ class UpdateHandler(Handler):
 		for e in db.GqlQuery("SELECT * FROM BradyVideo WHERE published <:1", latest_grey_vid.published):
 			e.delete()
 		
-		already_added_urls = [ e.url for e in list(db.GqlQuery("SELECT * FROM BradyVideo")) ]
+		already_added_ids = [ e.yt_id for e in list(db.GqlQuery("SELECT * FROM BradyVideo")) ]
 		for e in bradyVids:
-			if e.url not in already_added_urls:
+			if e.yt_id not in already_added_ids:
 				e.put()
 		
 		for e in db.GqlQuery("SELECT * FROM GreyVideo"):
 			e.delete()
+		latest_grey_vid.viewcount = youtube_integration.get_view_count(latest_grey_vid.yt_id)
 		latest_grey_vid.put()
 		
 		for e in db.GqlQuery("SELECT * FROM UpdateLog"):
 			e.delete() 
 		UpdateLog().put()
+		
+		time.sleep(1)
+		
+		for brady_vid in list(db.GqlQuery("SELECT * FROM BradyVideo")):
+			brady_vid.viewcount = youtube_integration.get_view_count(brady_vid.yt_id)
+			brady_vid.put()
 		
 		self.write('Database updated! <a href="/update_push">Push this update.</a>')
 

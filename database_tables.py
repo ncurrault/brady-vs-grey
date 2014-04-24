@@ -1,10 +1,18 @@
 from google.appengine.ext import db
 
 class Video(db.Model):
-	url = db.StringProperty()
+	yt_id = db.StringProperty()
 	title = db.StringProperty()
 	published = db.DateTimeProperty()
 	channel = db.StringProperty()
+	
+	viewcount = db.IntegerProperty()
+	# [0,inf) for actual view count
+	# -1 for live videos
+	# -2 for not yet calculated
+	# -3 for misc. errors
+	
+
 class BradyVideo(Video):
 	pass
 class GreyVideo(Video):
