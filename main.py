@@ -107,7 +107,7 @@ page_template = """
 <head>
 	<title>Brady vs. Grey</title>
 	<script>
-		function writeThings ()
+		function revealThings ()
 		{
 			for (var i in document.getElementsByClassName('hidden-to-grey'))
 			{
@@ -159,25 +159,20 @@ A:
 
 <table cellpadding="3" cellspacing="3">
 	<tr>
-		<td>Average Grey views</td>
+		<td>Grey</td>
 		<td>%(grey_views)s</td>
 	</tr>
 	<tr>
-		<td>Average Brady views</td>
+		<td>Brady: Average</td>
 		<td>%(brady_avg)s</td>
 	</tr>
 	<tr id="hidden-stuff-toggle">
-		<td>
-			<button onclick="writeThings();">Grey, don't click here!</button>
+		<td colspan="2">
+			<button onclick="revealThings();">Grey, don't click here!</button>
 		</td>
 	</tr>
-	
 	<tr class="hidden-to-grey" hidden>
-		<td>Total Grey views</td>
-		<td>%(grey_views)s</td>
-	</tr>
-	<tr class="hidden-to-grey" hidden>
-		<td>Total Brady views</td>
+		<td>Brady: Total</td>
 		<td>%(brady_total)s</td>
 	</tr>
 </table>
