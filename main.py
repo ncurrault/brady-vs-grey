@@ -16,11 +16,23 @@
 #
 import cgi
 import datetime
+import time
 import webapp2
 
-import time
-from hashlib import sha256
+import hashlib
+import pickle
 
+def my_secure_hash(s):
+	with open('hashing_secrets.p','r') as hashing_secrets_f:
+		hashing_secret, hashing_degree = pickle.load(hashing_secrets_f)
+	
+	iters = 0
+	hashed = s
+	
+	while iters < hashing_degree:
+		hashed = hashlib.sha256(hashed).hexdigest()
+		iters += 1
+	return hashed
 
 from google.appengine.ext import db
 from google.appengine.api import memcache
@@ -244,7 +256,7 @@ class MainHandler(Handler):
 class UpdateHandler(Handler):
 	def get(self):
 		secret = self.request.get('secret')
-		if sha256(secret).hexdigest() != '30f46c9349a149146110dd3e7d8dd7c7c3a585e737eab598cf2bfb38d774eba5':
+		if my_secure_hash(secret) != '3f6923a4ecbec45bdb17b0abad1168a459cff4c23fb2e4d3f9ffe840bb6ca797':
 			self.error(400)
 			return
 		
@@ -294,7 +306,7 @@ class UpdateHandler(Handler):
 class UpdatePushHandler(Handler):
 	def get(self):
 		secret = self.request.get('secret')
-		if sha256(secret).hexdigest() != '30f46c9349a149146110dd3e7d8dd7c7c3a585e737eab598cf2bfb38d774eba5':
+		if my_secure_hash(secret) != '3f6923a4ecbec45bdb17b0abad1168a459cff4c23fb2e4d3f9ffe840bb6ca797':
 			self.error(400)
 			return
 			
