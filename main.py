@@ -201,6 +201,17 @@ Brady's channels: numberphile, Computerphile, sixtysymbols, periodicvideos, nott
 </html>
 """
 def get_row(vid, creator):
+	if vid.viewcount == 301:
+		disp_views = '<a href="http://youtu.be/oIkhgagvrjI">301</a>'
+	elif vid.viewcount >= 0:
+		disp_views = vid.viewcount
+	elif vid.viewcount==-1:
+		disp_views = "&lt;live video&gt;"
+	elif vid.viewcount==-2:
+		disp_views = "&lt;not yet calculated&gt;"
+	else:
+		disp_views = "&lt;error&gt;"
+	
 	return \
 	"""
 	<tr>
@@ -228,11 +239,7 @@ def get_row(vid, creator):
 	'published': vid.published.strftime('%B %d, %Y, %I:%M %p'),
 	'url': 'http://youtu.be/' + vid.yt_id,
 	'creator': creator,
-	'views': ( \
-	vid.viewcount if vid.viewcount >= 0 \
-	else ("&lt;live video&gt;" if vid.viewcount==-1 \
-	else ("&lt;not yet calculated&gt;" if vid.viewcount==-2 \
-	else "&lt;error&gt;")))
+	'views': disp_views
 	}
 
 class MainHandler(Handler):
