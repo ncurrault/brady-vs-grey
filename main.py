@@ -172,20 +172,20 @@ A:
 <table cellpadding="3" cellspacing="3">
 	<tr>
 		<td>Grey</td>
-		<td>%(grey_views)s</td>
+		<td align="right">%(grey_views)s</td>
 	</tr>
 	<tr>
 		<td>Brady: Average</td>
-		<td>%(brady_avg)s</td>
+		<td align="right">%(brady_avg)s</td>
 	</tr>
-	<tr id="hidden-stuff-toggle">
+	<tr id="hidden-stuff-toggle" %(brady_visible)s>
 		<td colspan="2">
 			<button onclick="revealThings();">Grey, don't click here!</button>
 		</td>
 	</tr>
-	<tr class="hidden-to-grey" hidden>
+	<tr class="hidden-to-grey" %(brady_hidden)s>
 		<td>Brady: Total</td>
-		<td>%(brady_total)s</td>
+		<td align="right">%(brady_total)s</td>
 	</tr>
 </table>
 
@@ -244,7 +244,7 @@ def get_row(vid, creator):
 
 class MainHandler(Handler):
     def get(self):
-        try:
+        #try:
         	bradyVids, greyVid, lastUpdate, greyViews, bradyTotal, bradyAvg = load_front_data()
         	formatting_table = { }
         	formatting_table['number'] = len(bradyVids)
@@ -253,11 +253,13 @@ class MainHandler(Handler):
         	formatting_table['grey_views'] = greyViews
         	formatting_table['brady_total'] = bradyTotal
         	formatting_table['brady_avg'] = bradyAvg
+        	formatting_table['brady_visible'] = ('hidden' if greyViews > bradyTotal else '')
+        	formatting_table['brady_hidden'] = ('hidden' if greyViews <= bradyTotal else '')
         	
         	self.write(page_template%formatting_table)
-        except:
-        	self.error(500)
-        	self.write("There was an error! Please tell me how you got here at nicholas.curr+dev@gmail.com<br><br>Thanks,<br>Nicholas")
+        #except:
+        #	self.error(500)
+        #	self.write("There was an error! Please tell me how you got here at nicholas.curr+dev@gmail.com<br><br>Thanks,<br>Nicholas")
         
 
 class UpdateHandler(Handler):
