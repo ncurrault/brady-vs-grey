@@ -202,6 +202,8 @@ FYI:
 Grey's channels: CGPGrey, CGPGrey2, and greysfavs
 Brady's channels: numberphile, Computerphile, sixtysymbols, periodicvideos, nottinghamscience, DeepSkyVideos, bibledex, wordsoftheworld, FavScientist, psyfile, BackstageScience, BradyStuff, and foodskey
 -->
+<br /><br />
+Sorry to the 310 of you who were blocked by a bug that was triggered by Grey's newest video.  (It happens so rarely that I was not able to test my code!)
 </body>
 </html>
 """
