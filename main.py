@@ -203,7 +203,7 @@ Grey's channels: CGPGrey, CGPGrey2, and greysfavs
 Brady's channels: numberphile, Computerphile, sixtysymbols, periodicvideos, nottinghamscience, DeepSkyVideos, bibledex, wordsoftheworld, FavScientist, psyfile, BackstageScience, BradyStuff, and foodskey
 -->
 <br /><br />
-Sorry to the 310 of you who were blocked by a bug that was triggered by Grey's newest video.  (It happens so rarely that I was not able to test my code!)
+Sorry to the 310 of you who were blocked by a bug that was triggered by Grey's newest video.
 </body>
 </html>
 """
@@ -287,18 +287,19 @@ class UpdateHandler(Handler):
 		
 		
 		all_grey_vids.sort(key=lambda vid:vid.published, reverse=True)
-		latest_grey_vid = all_grey_vids[0]
+		#latest_grey_vid = all_grey_vids[0]
+		for e in all_grey_vids:
+			if not e.title.startswith('ANNOUNCEMENT:'):
+				latest_grey_vid = e
+				break
 		
 		all_brady_vids.sort(key=lambda vid:vid.published, reverse=True)
-		
 		bradyVids = [vid for vid in all_brady_vids if vid.published > latest_grey_vid.published]
-		greyVid = all_grey_vids[0]
 		
 		for e in db.GqlQuery("SELECT * FROM BradyVideo"):
 			e.delete()
 		for e in bradyVids:
-			if e.yt_id not in already_added_ids:
-				e.put()
+			e.put()
 		
 		for e in db.GqlQuery("SELECT * FROM GreyVideo"):
 			e.delete()
