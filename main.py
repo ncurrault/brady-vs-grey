@@ -76,7 +76,12 @@ def load_front_data():
 		bradyTotal = sum(countable_brady_counts)
 		memcache.set('bradyTotal', bradyTotal)
 		
-		bradyAvg = bradyTotal/len(countable_brady_counts)
+		
+		if len(countable_brady_counts)==0:
+			bradyAvg = 'N/A'
+		else:
+			bradyAvg = bradyTotal/len(countable_brady_counts)
+		
 		memcache.set('bradyAvg', bradyAvg)
 	
 	return (bradyVids, greyVid, lastUpdate, greyViews, bradyTotal, bradyAvg)
@@ -244,7 +249,7 @@ def get_row(vid, creator):
 
 class MainHandler(Handler):
     def get(self):
-        #try:
+        try:
         	bradyVids, greyVid, lastUpdate, greyViews, bradyTotal, bradyAvg = load_front_data()
         	formatting_table = { }
         	formatting_table['number'] = len(bradyVids)
@@ -257,9 +262,9 @@ class MainHandler(Handler):
         	formatting_table['brady_hidden'] = ('hidden' if greyViews <= bradyTotal else '')
         	
         	self.write(page_template%formatting_table)
-        #except:
-        #	self.error(500)
-        #	self.write("There was an error! Please tell me how you got here at nicholas.curr+dev@gmail.com<br><br>Thanks,<br>Nicholas")
+        except:
+        	self.error(500)
+        	self.write("There was an error! Please tell me how you got here at nicholas.curr+dev@gmail.com<br><br>Thanks,<br>Nicholas")
         
 
 class UpdateHandler(Handler):
@@ -287,10 +292,8 @@ class UpdateHandler(Handler):
 		bradyVids = [vid for vid in all_brady_vids if vid.published > latest_grey_vid.published]
 		greyVid = all_grey_vids[0]
 		
-		for e in db.GqlQuery("SELECT * FROM BradyVideo WHERE published <:1", latest_grey_vid.published):
+		for e in db.GqlQuery("SELECT * FROM BradyVideo"):
 			e.delete()
-		
-		already_added_ids = [ e.yt_id for e in list(db.GqlQuery("SELECT * FROM BradyVideo")) ]
 		for e in bradyVids:
 			if e.yt_id not in already_added_ids:
 				e.put()
