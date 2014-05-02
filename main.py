@@ -203,7 +203,7 @@ Grey's channels: CGPGrey, CGPGrey2, and greysfavs
 Brady's channels: numberphile, Computerphile, sixtysymbols, periodicvideos, nottinghamscience, DeepSkyVideos, bibledex, wordsoftheworld, FavScientist, psyfile, BackstageScience, BradyStuff, and foodskey
 -->
 <br /><br />
-Sorry to the 310 of you who were blocked by a bug that was triggered by Grey's newest video.
+NEW: Videos by either creator that begin with "announcement" are not included.
 </body>
 </html>
 """
@@ -251,23 +251,18 @@ def get_row(vid, creator):
 
 class MainHandler(Handler):
     def get(self):
-        try:
-        	bradyVids, greyVid, lastUpdate, greyViews, bradyTotal, bradyAvg = load_front_data()
-        	formatting_table = { }
-        	formatting_table['number'] = len(bradyVids)
-        	formatting_table['refresh_date'] = lastUpdate.strftime('%Y-%m-%d, %H:%M:%S UTC')
-        	formatting_table['rows'] = '\n'.join([get_row(greyVid, "C.G.P. Grey")] + [get_row(vid, "Brady Haran") for vid in bradyVids[::-1]])
-        	formatting_table['grey_views'] = greyViews
-        	formatting_table['brady_total'] = bradyTotal
-        	formatting_table['brady_avg'] = bradyAvg
-        	formatting_table['brady_visible'] = ('hidden' if greyViews > bradyTotal else '')
-        	formatting_table['brady_hidden'] = ('hidden' if greyViews <= bradyTotal else '')
-        	
-        	self.write(page_template%formatting_table)
-        except:
-        	self.error(500)
-        	self.write("There was an error! Please tell me how you got here at nicholas.curr+dev@gmail.com<br><br>Thanks,<br>Nicholas")
+        bradyVids, greyVid, lastUpdate, greyViews, bradyTotal, bradyAvg = load_front_data()
+        formatting_table = { }
+        formatting_table['number'] = len(bradyVids)
+        formatting_table['refresh_date'] = lastUpdate.strftime('%Y-%m-%d, %H:%M:%S UTC')
+        formatting_table['rows'] = '\n'.join([get_row(greyVid, "C.G.P. Grey")] + [get_row(vid, "Brady Haran") for vid in bradyVids[::-1]])
+        formatting_table['grey_views'] = greyViews
+        formatting_table['brady_total'] = bradyTotal
+        formatting_table['brady_avg'] = bradyAvg
+        formatting_table['brady_visible'] = ('hidden' if greyViews > bradyTotal else '')
+        formatting_table['brady_hidden'] = ('hidden' if greyViews <= bradyTotal else '')
         
+        self.write(page_template%formatting_table)        
 
 class UpdateHandler(Handler):
 	def get(self):
@@ -289,7 +284,7 @@ class UpdateHandler(Handler):
 		all_grey_vids.sort(key=lambda vid:vid.published, reverse=True)
 		#latest_grey_vid = all_grey_vids[0]
 		for e in all_grey_vids:
-			if not e.title.startswith('ANNOUNCEMENT:'):
+			if not e.title.lower().startswith('announcement'):
 				latest_grey_vid = e
 				break
 		
@@ -299,7 +294,8 @@ class UpdateHandler(Handler):
 		for e in db.GqlQuery("SELECT * FROM BradyVideo"):
 			e.delete()
 		for e in bradyVids:
-			e.put()
+			if not e.title.lower().startswith('announcement'):
+				e.put()
 		
 		for e in db.GqlQuery("SELECT * FROM GreyVideo"):
 			e.delete()
@@ -336,3 +332,66 @@ app = webapp2.WSGIApplication([
     ('/update/?',UpdateHandler),
     ('/update_push/?',UpdatePushHandler),
 ], debug=True)
+
+
+
+
+e404 = """
+<!DOCTYPE html>
+
+<html>
+<head>
+	<title>404 &mdash; Not Found</title>
+	<style>
+		.error {
+			color: red;
+			font-family: Impact, "Arial Black", "Comic Sans MS", Verdana, sans-serif;
+			font-size: 72pt;
+			text-transform: uppercase;
+		}
+	</style>
+</head>
+<body>
+<center><div class="error">error 404:&nbsp;&nbsp; not found</div></center>
+<img src="http://dl.dropboxusercontent.com/u/23230235/For%20Other%20Websites/notthedroids.jpg" height="50%" width="50%"><br>
+<font size="5">This is not the page you're looking for.<br>Move along...<br>Move along...</font>
+<br><br>
+<p>If you wish to report how you got here, email me at
+nich<a href="http://www.google.com/recaptcha/mailhide/d?k=01YCS2MGMsm9uky9oHmBW4qw==&amp;c=kjLOqocHPj-BfkpO4at5Sq3r0HGqipZ--vuRwJrolms=" onclick="window.open('http://www.google.com/recaptcha/mailhide/d?k\07501YCS2MGMsm9uky9oHmBW4qw\75\75\46c\75kjLOqocHPj-BfkpO4at5Sq3r0HGqipZ--vuRwJrolms\075', '', 'toolbar=0,scrollbars=0,location=0,statusbar=0,menubar=0,resizable=0,width=500,height=300'); return false;" title="Reveal this e-mail address">...</a>
+@gmail.com</p>
+</body>
+</html>
+"""
+def handle_404(request, response, exception):
+	response.write(e404)
+	response.set_status(exception.status_int)
+app.error_handlers[404] = handle_404
+
+e500 = """
+<!DOCTYPE html>
+
+<html>
+<head>
+	<title>500 &mdash; Internal Server Error</title>
+	<style>
+		.error {
+			color: red;
+			font-family: Impact, "Arial Black", "Comic Sans MS", Verdana, sans-serif;
+			font-size: 72pt;
+			text-transform: uppercase;
+		}
+	</style>
+</head>
+<body>
+<center><div class="error">error 500:&nbsp;&nbsp; internal server error</div></center>
+
+<p>Something's wrong; that's my fault!</p>
+<p>Please <a href="mailto:nicholas.curr+webapps@gmail.com">report this (email me at nicholas.curr+webapps@gmail.com)</a> so that the error may be fixed.
+</p>
+</body>
+</html>
+"""
+def handle_500(request, response, exception):
+	response.clear()
+	response.write(e500)
+app.error_handlers[500] = handle_500
