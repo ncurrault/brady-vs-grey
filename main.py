@@ -203,7 +203,6 @@ Grey's channels: CGPGrey, CGPGrey2, and greysfavs
 Brady's channels: numberphile, Computerphile, sixtysymbols, periodicvideos, nottinghamscience, DeepSkyVideos, bibledex, wordsoftheworld, FavScientist, psyfile, BackstageScience, BradyStuff, and foodskey
 -->
 <br /><br />
-Sorry to the 310 of you who were blocked by a bug that was triggered by Grey's newest video.
 </body>
 </html>
 """
@@ -251,23 +250,18 @@ def get_row(vid, creator):
 
 class MainHandler(Handler):
     def get(self):
-        try:
-        	bradyVids, greyVid, lastUpdate, greyViews, bradyTotal, bradyAvg = load_front_data()
-        	formatting_table = { }
-        	formatting_table['number'] = len(bradyVids)
-        	formatting_table['refresh_date'] = lastUpdate.strftime('%Y-%m-%d, %H:%M:%S UTC')
-        	formatting_table['rows'] = '\n'.join([get_row(greyVid, "C.G.P. Grey")] + [get_row(vid, "Brady Haran") for vid in bradyVids[::-1]])
-        	formatting_table['grey_views'] = greyViews
-        	formatting_table['brady_total'] = bradyTotal
-        	formatting_table['brady_avg'] = bradyAvg
-        	formatting_table['brady_visible'] = ('hidden' if greyViews > bradyTotal else '')
-        	formatting_table['brady_hidden'] = ('hidden' if greyViews <= bradyTotal else '')
-        	
-        	self.write(page_template%formatting_table)
-        except:
-        	self.error(500)
-        	self.write("There was an error! Please tell me how you got here at nicholas.curr+dev@gmail.com<br><br>Thanks,<br>Nicholas")
+        bradyVids, greyVid, lastUpdate, greyViews, bradyTotal, bradyAvg = load_front_data()
+        formatting_table = { }
+        formatting_table['number'] = len(bradyVids)
+        formatting_table['refresh_date'] = lastUpdate.strftime('%Y-%m-%d, %H:%M:%S UTC')
+        formatting_table['rows'] = '\n'.join([get_row(greyVid, "C.G.P. Grey")] + [get_row(vid, "Brady Haran") for vid in bradyVids[::-1]])
+        formatting_table['grey_views'] = greyViews
+        formatting_table['brady_total'] = bradyTotal
+        formatting_table['brady_avg'] = bradyAvg
+        formatting_table['brady_visible'] = ('hidden' if greyViews > bradyTotal else '')
+        formatting_table['brady_hidden'] = ('hidden' if greyViews <= bradyTotal else '')
         
+        self.write(page_template%formatting_table)        
 
 class UpdateHandler(Handler):
 	def get(self):
@@ -287,18 +281,13 @@ class UpdateHandler(Handler):
 		
 		
 		all_grey_vids.sort(key=lambda vid:vid.published, reverse=True)
-		#latest_grey_vid = all_grey_vids[0]
-		for e in all_grey_vids:
-			if not e.title.startswith('ANNOUNCEMENT:'):
-				latest_grey_vid = e
-				break
+		latest_grey_vid = all_grey_vids[0]
 		
 		all_brady_vids.sort(key=lambda vid:vid.published, reverse=True)
-		bradyVids = [vid for vid in all_brady_vids if vid.published > latest_grey_vid.published]
 		
 		for e in db.GqlQuery("SELECT * FROM BradyVideo"):
 			e.delete()
-		for e in bradyVids:
+		for e in [vid for vid in all_brady_vids if vid.published > latest_grey_vid.published]:
 			e.put()
 		
 		for e in db.GqlQuery("SELECT * FROM GreyVideo"):
