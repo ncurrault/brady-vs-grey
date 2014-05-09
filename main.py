@@ -219,6 +219,7 @@ def get_row(vid, creator):
 	else:
 		disp_views = "&lt;error&gt;"
 	
+def get_row(vid):
 	return \
 	"""
 	<tr>
@@ -245,8 +246,8 @@ def get_row(vid, creator):
 	'channel': vid.channel,
 	'published': vid.published.strftime('%B %d, %Y, %I:%M %p'),
 	'url': 'http://youtu.be/' + vid.yt_id,
-	'creator': creator,
 	'views': disp_views
+	'creator': ("Brady Haran" if vid.channel in BRADY_CHANNELS else "C.G.P. Grey"),
 	}
 
 class MainHandler(Handler):
@@ -255,7 +256,7 @@ class MainHandler(Handler):
         formatting_table = { }
         formatting_table['number'] = len(bradyVids)
         formatting_table['refresh_date'] = lastUpdate.strftime('%Y-%m-%d, %H:%M:%S UTC')
-        formatting_table['rows'] = '\n'.join([get_row(greyVid, "C.G.P. Grey")] + [get_row(vid, "Brady Haran") for vid in bradyVids[::-1]])
+        formatting_table['rows'] = '\n'.join([get_row(greyVid)] + [get_row(vid) for vid in bradyVids[::-1]])
         formatting_table['grey_views'] = greyViews
         formatting_table['brady_total'] = bradyTotal
         formatting_table['brady_avg'] = bradyAvg
