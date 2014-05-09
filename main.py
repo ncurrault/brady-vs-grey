@@ -49,6 +49,18 @@ BRADY_CHANNELS = [ 'numberphile', 'Computerphile',
 'FavScientist', 'psyfile', 'BackstageScience',
 'foodskey', 'BradyStuff']
 
+def disp_viewcount(db_views):
+	if db_views == 301:
+		return '<a href="http://youtu.be/oIkhgagvrjI">301</a>'
+	elif db_views >= 0:
+		return db_views
+	elif db_views == -1:
+		return "&lt;live video&gt;"
+	elif db_views == -2:
+		return "&lt;not yet calculated&gt;"
+	else:
+		return "&lt;error&gt;"
+	
 def load_front_data():
 	bradyVids = memcache.get('bradyVids')
 	greyVid = memcache.get('greyVid')
@@ -69,7 +81,7 @@ def load_front_data():
 		lastUpdate = list(db.GqlQuery("SELECT * FROM UpdateLog ORDER BY update_time DESC LIMIT 1"))[0].update_time
 		memcache.set('lastUpdate', lastUpdate)
 		
-		greyViews = greyVid.viewcount
+		greyViews = disp_viewcount(greyVid.viewcount)
 		memcache.set('greyViews', greyViews)
 		
 		countable_brady_counts = [vid.viewcount for vid in bradyVids if vid.viewcount>=0]
@@ -207,18 +219,6 @@ Brady's channels: numberphile, Computerphile, sixtysymbols, periodicvideos, nott
 </body>
 </html>
 """
-def get_row(vid, creator):
-	if vid.viewcount == 301:
-		disp_views = '<a href="http://youtu.be/oIkhgagvrjI">301</a>'
-	elif vid.viewcount >= 0:
-		disp_views = vid.viewcount
-	elif vid.viewcount==-1:
-		disp_views = "&lt;live video&gt;"
-	elif vid.viewcount==-2:
-		disp_views = "&lt;not yet calculated&gt;"
-	else:
-		disp_views = "&lt;error&gt;"
-	
 def get_row(vid):
 	return \
 	"""
@@ -246,8 +246,8 @@ def get_row(vid):
 	'channel': vid.channel,
 	'published': vid.published.strftime('%B %d, %Y, %I:%M %p'),
 	'url': 'http://youtu.be/' + vid.yt_id,
-	'views': disp_views
 	'creator': ("Brady Haran" if vid.channel in BRADY_CHANNELS else "C.G.P. Grey"),
+	'views': disp_viewcount(vid.viewcount)
 	}
 
 class MainHandler(Handler):
