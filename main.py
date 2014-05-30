@@ -199,12 +199,8 @@ A:
 <hr />
 Last updated: %(refresh_date)s.
 Powered by YouTube Data API (v3).
-<!--
-FYI:
-Grey's channels: CGPGrey, CGPGrey2, and greysfavs
-Brady's channels: numberphile, Computerphile, sixtysymbols, periodicvideos, nottinghamscience, DeepSkyVideos, bibledex, wordsoftheworld, FavScientist, psyfile, BackstageScience, BradyStuff, and foodskey
--->
-<br /><br />
+<hr />
+<iframe style="width: 100%%; border: 0;" src="https://dl.dropboxusercontent.com/u/23230235/For%%20Other%%20Websites/brady_vs_grey_messages.html"></iframe>
 </body>
 </html>
 """
