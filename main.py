@@ -293,17 +293,21 @@ class UpdateHandler(Handler):
 		time.sleep(1) # Wait for all the videos to be added before view calculation
 		
 		for brady_vid in list(db.GqlQuery("SELECT * FROM BradyVideo")):
-			brady_vid.delete()
 			brady_vid.viewcount = youtube_integration.get_view_count(brady_vid.yt_id)
 			brady_vid.put()
 		
-		time.sleep(2)
+		time.sleep(1)
 		
 		# Extra duplicate prevention
+		already_cleaned = [ ]
 		for vid in db.GqlQuery("SELECT * FROM BradyVideo"):
-			for other_vid in db.GqlQuery("SELECT * FROM BradyVideo where id!=:1", vid.key().id()):
-				if other_vid.yt_id == vid.yt_id:
+			if vid.yt_id in already_cleaned: # Prevents videos from being deleted entirely
+				continue
+			
+			for other_vid in db.GqlQuery("SELECT * FROM BradyVideo"):
+				if (other_vid.yt_id == vid.yt_id) and (vid.key().id() != other_vid.key().id()):
 					other_vid.delete()
+					already_cleaned.append(vid.yt_id)
 		
 		self.write('Database updated! <a href="/update_push?secret=%s">Push this update.</a>' % secret)
 
