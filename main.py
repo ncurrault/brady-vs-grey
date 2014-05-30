@@ -297,7 +297,7 @@ class UpdateHandler(Handler):
 			brady_vid.viewcount = youtube_integration.get_view_count(brady_vid.yt_id)
 			brady_vid.put()
 		
-		time.sleep(1)
+		time.sleep(2)
 		
 		# Extra duplicate prevention
 		for vid in db.GqlQuery("SELECT * FROM BradyVideo"):
