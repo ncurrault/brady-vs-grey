@@ -22,19 +22,8 @@ import webapp2
 import hashlib
 import pickle
 
-UPDATING_SECRET_HASH = '3f6923a4ecbec45bdb17b0abad1168a459cff4c23fb2e4d3f9ffe840bb6ca797'
-def my_secure_hash(s):
-	with open('hashing_secrets.p','r') as hashing_secrets_f:
-		hashing_secret, hashing_degree = pickle.load(hashing_secrets_f)
-	
-	iters = 0
-	hashed = s
-	
-	while iters < hashing_degree:
-		hashed = hashlib.sha256(hashed).hexdigest()
-		iters += 1
-	return hashed
-
+with open('update_secret.txt', 'r') as secret_file:
+	UPDATE_SECRET = secret_file.read()
 from google.appengine.ext import db
 from google.appengine.api import memcache
 
@@ -268,7 +257,7 @@ class MainHandler(Handler):
 class UpdateHandler(Handler):
 	def get(self):
 		secret = self.request.get('secret')
-		if my_secure_hash(secret) != UPDATING_SECRET_HASH:
+		if secret != UPDATE_SECRET:
 			self.error(400)
 			return
 		
@@ -321,7 +310,7 @@ class UpdateHandler(Handler):
 class UpdatePushHandler(Handler):
 	def get(self):
 		secret = self.request.get('secret')
-		if my_secure_hash(secret) != UPDATING_SECRET_HASH:
+		if secret != UPDATE_SECRET:
 			self.error(400)
 			return
 			
