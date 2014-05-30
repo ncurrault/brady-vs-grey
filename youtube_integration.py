@@ -36,12 +36,13 @@ QUERY_TERM = "dog"
 
 def get_view_count(vid_id):
 	try:
-		p = urllib.urlopen("https://gdata.youtube.com/feeds/api/videos/%s?v=2&alt=json" % vid_id)
+		url = "https://www.googleapis.com/youtube/v3/videos?id=%(id)s&key=%(key)s&fields=items(id,snippet(channelId,title,categoryId),statistics)&part=snippet,statistics" % {'key':API_KEY, 'id':vid_id}
+		p = urllib.urlopen(url)
 		json_data = p.read()
 		p.close()
 		json_data = json.loads(json_data)
 		
-		views = int(json_data['entry']['yt$statistics']['viewCount'])
+		views = int(json_data['items'][0]['statistics']['viewCount'])
 		return views
 	except KeyError:
 		return -1 # For live videos
@@ -88,6 +89,7 @@ def get_vids(input_channel_name, save_class='Video'):
       if len(videos) > 100:
         break
  
+  
   return [ \
   	eval(save_class)(
   		title=e[u'snippet'][u'title'], \
