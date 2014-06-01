@@ -200,6 +200,8 @@ A:
 Last updated: %(refresh_date)s.
 Powered by YouTube Data API (v3).
 <hr />
+<a href="http://github.com/nicktendo64/brady-vs-grey">View the source code on GitHub.</a>
+<br />
 <iframe style="width: 100%%; border: 0;" src="https://dl.dropboxusercontent.com/u/23230235/For%%20Other%%20Websites/brady_vs_grey_messages.html"></iframe>
 </body>
 </html>
