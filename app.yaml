@@ -6,8 +6,16 @@ threadsafe: yes
 
 handlers:
 - url: /favicon\.ico
-  static_files: favicon.ico
+  static_files: static/favicon.ico
   upload: favicon\.ico
+
+- url: /apple-touch-icon\.png
+  static_files: static/apple-touch-icon.png
+  upload: static/apple-touch-icon.png
+
+- url: /robots\.txt
+  static_files: static/robots.txt
+  upload: static/robots.txt
 
 - url: .*
   script: main.app
