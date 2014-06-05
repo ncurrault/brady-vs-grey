@@ -1,0 +1,7 @@
+cron:
+- description: 4x daily update to push to the database
+  url: /update
+  schedule: every 6 hours from 00:00 to 23:59
+- description: hourly database query to update memcache; always at least 5 min after an update
+  url: /update_push
+  schedule: every 1 hours from 00:05 to 23:10

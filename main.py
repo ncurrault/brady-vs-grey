@@ -22,8 +22,6 @@ import webapp2
 import hashlib
 import pickle
 
-with open('update_secret.txt', 'r') as secret_file:
-	UPDATE_SECRET = secret_file.read()
 from google.appengine.ext import db
 from google.appengine.api import memcache
 
@@ -254,8 +252,7 @@ class MainHandler(Handler):
 
 class UpdateHandler(Handler):
 	def get(self):
-		secret = self.request.get('secret')
-		if secret != UPDATE_SECRET:
+		if self.request.headers.get('X-Appengine-Cron') != 'true': # This header is only given by a cron job.
 			self.error(400)
 			return
 		
@@ -311,11 +308,9 @@ class UpdateHandler(Handler):
 
 class UpdatePushHandler(Handler):
 	def get(self):
-		secret = self.request.get('secret')
-		if secret != UPDATE_SECRET:
+		if self.request.headers.get('X-Appengine-Cron') != 'true': # This header is only given by a cron job.
 			self.error(400)
 			return
-			
 			
 		memcache.flush_all()
 		load_front_data()
