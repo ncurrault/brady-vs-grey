@@ -229,7 +229,7 @@ def get_row(vid):
 	""" % {
 	'title': vid.title,
 	'channel': vid.channel,
-	'published': vid.published.strftime('%B %d, %Y, %I:%M %p'),
+	'published': vid.published.strftime('%B %d, %Y @ %I:%M %p'),
 	'url': 'http://youtu.be/' + vid.yt_id,
 	'creator': ("Brady Haran" if vid.channel in BRADY_CHANNELS else "C.G.P. Grey"),
 	'views': disp_viewcount(vid.viewcount)
