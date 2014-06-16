@@ -253,7 +253,7 @@ class MainHandler(Handler):
 class UpdateHandler(Handler):
 	def get(self):
 		if self.request.headers.get('X-Appengine-Cron') != 'true': # This header is only given by a cron job.
-			self.error(400)
+			self.error(403) # Forbidden
 			return
 		
 		
@@ -309,7 +309,7 @@ class UpdateHandler(Handler):
 class UpdatePushHandler(Handler):
 	def get(self):
 		if self.request.headers.get('X-Appengine-Cron') != 'true': # This header is only given by a cron job.
-			self.error(400)
+			self.error(403) # Forbidden
 			return
 			
 		memcache.flush_all()
