@@ -304,7 +304,7 @@ class UpdateHandler(Handler):
 					other_vid.delete()
 					already_cleaned.append(vid.yt_id)
 		
-		self.write('Database updated! <a href="/update_push?secret=%s">Push this update.</a>' % secret)
+		self.write('Database updated! You need to <a href="/update_push">push this update</a> for it to take effect.')
 
 class UpdatePushHandler(Handler):
 	def get(self):
@@ -315,7 +315,7 @@ class UpdatePushHandler(Handler):
 		memcache.flush_all()
 		load_front_data()
 		
-		self.write('Update pushed! <a href="/">Go back to the homepage.</a>')
+		self.write('Update pushed!')
 
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
