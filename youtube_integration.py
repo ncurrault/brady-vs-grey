@@ -86,8 +86,13 @@ def get_vids(input_channel_name, save_class='Video'):
       next_page_token = playlistitems_response.get('tokenPagination', {}).get(
           'nextPageToken')
       
-      if len(videos) > 100:
+      if save_class == 'BradyVideo' and len(videos) > 20: # One Brady's channels shouldn't have MORE THAN 20 that are necessary
         break
+      elif save_class == 'GreyVideo' and len(videos) > 1: # For Grey's channels, you only need the most recent video
+    	break
+      elif len(videos) > 100: # This shouldn't actually happen
+      	break
+      	
  
   
   return [ \
