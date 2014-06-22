@@ -152,23 +152,23 @@ A:
 <span style="font-size: 100px;">%(number)s</span>
 <br /><hr /><br />
 <table cellpadding="5" cellspacing="5">
-	<tr>
-		<td><strong>
+	<thead>
+		<th>
 			Creator
-		</strong></td>
-		<td><strong>
+		</th>
+		<th>
 			Channel
-		</strong></td>
-		<td><strong>
+		</th>
+		<th>
 			Uploaded
-		</strong></td>
-		<td><strong>
+		</th>
+		<th>
 			View Count
-		</strong></td>
-		<td><strong>
+		</th>
+		<th>
 			Title/Link
-		</strong></td>
-	</tr>
+		</th>
+	</thead>
 	%(rows)s
 </table>
 <hr>
@@ -217,7 +217,7 @@ def get_row(vid):
 		<td>
 			%(published)s
 		</td>
-		<td>
+		<td style="text-align:right">
 			%(views)s
 		</td>
 		<td>
