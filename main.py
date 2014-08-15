@@ -200,7 +200,15 @@ Powered by YouTube Data API (v3).
 <hr />
 <a href="http://github.com/nicktendo64/brady-vs-grey">View the source code on GitHub.</a>
 <br />
-<iframe style="width: 100%%; border: 0;" src="https://dl.dropboxusercontent.com/u/23230235/For%%20Other%%20Websites/brady_vs_grey_messages.html"></iframe>
+Notes:
+<ul>
+	<li>
+		To conserve processing power and network resources, this app should update only four times per day: 00:00, 06:00, 12:00, and 18:00 UTC.
+	</li>
+	<li>
+		A new version of this web app is now available <a href="http://brady-vs-grey.herokuapp.com/">here</a>.
+	</li>
+</ul>
 </body>
 </html>
 """
