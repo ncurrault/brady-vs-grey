@@ -122,7 +122,7 @@ page_template = """
 
 <html>
 <head>
-	<title>Brady vs. Grey</title>
+	<title>Brady vs. Grey | Original</title>
 	<script>
 		function revealThings ()
 		{
