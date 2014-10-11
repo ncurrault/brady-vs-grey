@@ -207,6 +207,9 @@ Notes:
 	<li>
 		A new version of this web app is now available <a href="http://brady-vs-grey.herokuapp.com/">here</a>.
 	</li>
+	<li>
+		Recently, a pull request by Github user Eseb ensured that Grey's 2nd channel is not counted.  This is a response to the video <a href="http://youtu.be/rMY0NgKXtCA">"⌘X 22.1: Seventeen"</a>.
+	</li>
 </ul>
 </body>
 </html>
@@ -223,7 +226,7 @@ def get_row(vid):
 		</td>
 		<td>
 			%(published)s
-		</td>
+	</td>
 		<td style="text-align:right">
 			%(views)s
 		</td>
