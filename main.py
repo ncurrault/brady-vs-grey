@@ -28,8 +28,7 @@ from google.appengine.api import memcache
 import youtube_integration
 from database_tables import *
 
-GREY_CHANNELS = [ 'CGPGrey', 'CGPGrey2',
-'greysfavs']
+GREY_CHANNELS = [ 'CGPGrey']
 BRADY_CHANNELS = [ 'numberphile', 'Computerphile',
 'sixtysymbols', 'periodicvideos', 'nottinghamscience',
 'DeepSkyVideos', 'bibledex', 'wordsoftheworld',
