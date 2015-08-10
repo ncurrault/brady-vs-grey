@@ -356,9 +356,7 @@ e404 = """
 <img src="http://dl.dropboxusercontent.com/u/23230235/For%20Other%20Websites/notthedroids.jpg" height="50%" width="50%"><br>
 <font size="5">This is not the page you're looking for.<br>Move along...<br>Move along...</font>
 <br><br>
-<p>If you wish to report how you got here, email me at
-nich<a href="http://www.google.com/recaptcha/mailhide/d?k=01YCS2MGMsm9uky9oHmBW4qw==&amp;c=kjLOqocHPj-BfkpO4at5Sq3r0HGqipZ--vuRwJrolms=" onclick="window.open('http://www.google.com/recaptcha/mailhide/d?k\07501YCS2MGMsm9uky9oHmBW4qw\75\75\46c\75kjLOqocHPj-BfkpO4at5Sq3r0HGqipZ--vuRwJrolms\075', '', 'toolbar=0,scrollbars=0,location=0,statusbar=0,menubar=0,resizable=0,width=500,height=300'); return false;" title="Reveal this e-mail address">...</a>
-@gmail.com</p>
+<p>If you wish to report a broken link, <a href="mailto:nicholas.curr+webapps@gmail.com">email me at nicholas.curr+webapps@gmail.com</a></p>
 </body>
 </html>
 """
