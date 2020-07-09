@@ -33,7 +33,8 @@ BRADY_CHANNELS = [ 'numberphile', 'Computerphile',
 'sixtysymbols', 'periodicvideos', 'nottinghamscience',
 'DeepSkyVideos', 'bibledex', 'wordsoftheworld',
 'FavScientist', 'psyfile', 'BackstageScience',
-'foodskey', 'BradyStuff']
+'foodskey', 'BradyStuff', 'objectivyvideos',
+'UCklRMZDOKKKs-d14YPmLMxg', 'BradyStuff', 'PhylosophyFile']
 
 def disp_viewcount(db_views):
 	if db_views == 301:
